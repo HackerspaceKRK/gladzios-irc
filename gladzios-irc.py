@@ -3,51 +3,50 @@
 from oyoyo.client import IRCClient
 from oyoyo.cmdhandler import DefaultCommandHandler
 from oyoyo import helpers
+import ConfigParser
 import logging
-import commands
 import socket
 import time
 import re
+import os
+import commands
+import sys, traceback
 
-class irc_config:
-    server = 'chat.freenode.net'
-    port = 6667
-
-    nick = 'GLaDZIOS'
-
-    channels = ['#hackerspace-krk']
-
+config = ConfigParser.ConfigParser()
+config.read(os.path.join(os.path.dirname(os.path.realpath(__file__)),'settings.ini'))
 
 logging.basicConfig(level=logging.DEBUG)
 
 is_command_pattern = re.compile('\![a-zA-Z0-9]+')
-def iscommand(text):
-    return True if is_command_pattern.match(text) else False
 
 class IRCHandler(DefaultCommandHandler):
     def endofmotd(self, server, target, text):
-        for channel in irc_config.channels:
+        for channel in config.get('irc', 'channels').split(','):
             helpers.join(self.client, channel)
+
     def nicknameinuse(self, server, wtf, nick, reason):
         helpers.nick(self.client, nick+'_')
-    def privmsg(self, nick, chan, msg):
-        print "%s in %s said: %s" % (nick, chan, msg)
+
+    def privmsg(self, sender, chan, msg):
         if msg[0] == '!':
             s = msg.split(' ')
-            if iscommand(s[0]):
+            if is_command_pattern.match(s[0]):
                 command = s[0][1:]
                 arguments = s[1:]
-                sender = nick.split('!')[0]
+                nick = sender.split('!')[0]
 
                 if hasattr(commands, command) and callable(getattr(commands, command)):
                     try:
-                        response = getattr(commands, command)(nick, chan, arguments)
+                        response = getattr(commands, command)(nick, chan, arguments, sender, config, self)
                     except:
+                        exc_type, exc_value, exc_traceback = sys.exc_info()
+                        traceback.print_exception(exc_type, exc_value, exc_traceback, limit=2, file=sys.stdout)
                         response = 'Coś poszło nie tak…'
 
-                    helpers.msg(self.client, chan, sender+": "+response)
+                    if response is not None:
+                        helpers.msg(self.client, chan, nick+": "+response)
 
-cli = IRCClient(IRCHandler, host=irc_config.server, port=irc_config.port, nick=irc_config.nick)
+cli = IRCClient(IRCHandler, host=config.get('irc', 'server'), port=config.getint('irc', 'port'), nick=config.get('irc', 'nick'))
 
 try:
     conn = cli.connect()
