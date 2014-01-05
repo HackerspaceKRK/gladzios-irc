@@ -16,7 +16,7 @@ def at(nick, channel, arguments, sender, config, irc):
             j = r.json
 
         msg = []
-        msg.append(u"Hackerspace jest " + u"otwarty" if j['state']['open'] else u"zamknięty")
+        msg.append(u"Hackerspace jest " + (u"otwarty" if j['state']['open'] else u"zamknięty"))
 
         any_lights = False
         lights_str = []
