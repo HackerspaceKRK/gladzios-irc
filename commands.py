@@ -27,7 +27,7 @@ def at(nick, channel, arguments, sender, config, irc):
         if any_lights:
             msg.append(u"Światło zaświecone w: " + ', '.join(lights_str))
         else:
-            msg.append(u"Swiatła pogaszone")
+            msg.append(u"Światła pogaszone")
 
         helpers.msg(irc.client, channel, nick + ': ' + ', '.join(msg))
 
