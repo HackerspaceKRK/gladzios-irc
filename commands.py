@@ -47,7 +47,12 @@ def at(nick, channel, arguments, sender, config, irc):
         if l == 0:
             msg = u"Żywego ducha nie uświadczysz…"
         else:
-            msg = u"%s urządzeń, w tym białkowe: %s" % (l+j['total_devices_count'], ', '.join(j['users']))
+	    devnoun = u"urządzeń"
+	    if int(l+j['total_devices_count'])%10 >= 2 and int(l+j['total_devices_count'])%10 <=4 and int(l+j['total_devices_count']) > 14:
+	    	devnoun=u"urządzenia"
+	    if int(l+j['total_devices_count']) == 1:
+	    	devnoun=u"urządzenie"
+            msg = u"%s %s, w tym białkowe: %s" % (l+j['total_devices_count'], devnoun, ', '.join(j['users']))
 
         helpers.msg(irc.client, channel, nick + u": " + msg)
 
