@@ -25,9 +25,9 @@ def at(nick, channel, arguments, sender, config, irc):
                 lights_str.append(room)
 
         if any_lights:
-            msg.append(u"Światło zaświecone w: " + ', '.join(lights_str))
+            msg.append(u"Światło zaświecone w: " + ', '.join(lights_str) + '.')
         else:
-            msg.append(u"Światła pogaszone")
+            msg.append(u"Światła pogaszone.")
 
         helpers.msg(irc.client, channel, nick + ': ' + ', '.join(msg))
 
@@ -47,11 +47,13 @@ def at(nick, channel, arguments, sender, config, irc):
         if l == 0:
             msg = u"Żywego ducha nie uświadczysz…"
         else:
-	    devnoun = u"urządzeń"
-	    if int(l+j['total_devices_count'])%10 >= 2 and int(l+j['total_devices_count'])%10 <=4 and int(l+j['total_devices_count']) > 14:
-	    	devnoun=u"urządzenia"
-	    if int(l+j['total_devices_count']) == 1:
-	    	devnoun=u"urządzenie"
+            if int(l+j['total_devices_count']) == 1:
+                devnoun=u"urządzenie"
+            elif int(l+j['total_devices_count'])%10 >= 2 and int(l+j['total_devices_count'])%10 <=4 and int(l+j['total_devices_count']) > 14:
+                devnoun=u"urządzenia"
+            else:
+                devnoun = u"urządzeń"
+
             msg = u"%s %s, w tym białkowe: %s" % (l+j['total_devices_count'], devnoun, ', '.join(j['users']))
 
         helpers.msg(irc.client, channel, nick + u": " + msg)
