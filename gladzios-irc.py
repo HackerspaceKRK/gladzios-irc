@@ -1,6 +1,6 @@
 #!/usr/bin/python2
 # -*- coding: utf-8 -*-
-from oyoyo.client import IRCClient
+from oyoyo.client import IRCClient, IRCApp
 from oyoyo.cmdhandler import DefaultCommandHandler
 from oyoyo import helpers
 import ConfigParser
@@ -48,20 +48,10 @@ class IRCHandler(DefaultCommandHandler):
 
 cli = IRCClient(IRCHandler, host=config.get('irc', 'server'), port=config.getint('irc', 'port'), nick=config.get('irc', 'nick'))
 
-try:
-    conn = cli.connect()
-except:
-    time.sleep(10)
-    conn = cli.connect()
+app = IRCApp()
+app.addClient( cli )
 
-while True:
-    try:
-        conn.next()
-    except KeyboardInterrupt:
-        conn.close()
-        quit()
-    except socket.error as e:
-        print "Socket error (%d) reconnecting after delay" % e
-        time.sleep(10)
-        print "Now"
-        conn = cli.connect()
+try:
+    app.run()
+except KeyboardInterrupt:
+    quit()
