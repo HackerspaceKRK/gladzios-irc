@@ -19,7 +19,7 @@ def at(nick, channel, arguments, sender, config, irc):
 
         any_lights = False
         lights_str = []
-        for room, state in j['sensors']['ext_lights'].items():
+        for room, state in j['sensors']['ext_lights'][0].items():
             if state == True:
                 any_lights = True
                 lights_str.append(room)
