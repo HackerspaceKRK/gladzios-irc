@@ -3,8 +3,8 @@ from oyoyo import helpers
 import sys, traceback
 import requests
 
-def say(nick, channel, arguments, sender, config, irc):
-    return ' '.join(arguments)
+#def say(nick, channel, arguments, sender, config, irc):
+#    return ' '.join(arguments)
 
 def at(nick, channel, arguments, sender, config, irc):
     try:
